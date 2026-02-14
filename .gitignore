@@ -1,0 +1,86 @@
+# =========================
+# Android / Gradle
+# =========================
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+
+# Build folders
+/build
+*/build/
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradle.kts
+
+# Local configuration
+local.properties
+
+# =========================
+# Android Studio / IntelliJ
+# =========================
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Cache
+.caches/
+.externalNativeBuild/
+.capture/
+
+# =========================
+# Kotlin
+# =========================
+*.kotlin_module
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# NDK / CMake
+# =========================
+.cxx/
+
+# =========================
+# Firebase / Google Services
+# =========================
+google-services.json
+firebase.json
+
+# =========================
+# Keystore (MUY IMPORTANTE)
+# =========================
+*.jks
+*.keystore
+
+# =========================
+# Lint / Reports
+# =========================
+lint-results*.xml
+lint-results*.html
+lint-results*.txt
+
+# =========================
+# Compose / Testing
+# =========================
+**/uiTest/coverage/
+coverage.ec
+
+# =========================
+# Misc
+# =========================
+*.hprof
