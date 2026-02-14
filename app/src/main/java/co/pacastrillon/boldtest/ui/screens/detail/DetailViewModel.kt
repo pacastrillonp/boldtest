@@ -35,12 +35,12 @@ data class DetailUiState(
     val errorMessage: String? = null
 )
 
-class DetailViewModel : ViewModel() {
+open class DetailViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(DetailUiState())
-    val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
+    open val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun load(query: String) {
+    open fun load(query: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             delay(1000) // Simular delay

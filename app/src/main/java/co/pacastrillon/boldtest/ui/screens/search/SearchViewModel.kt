@@ -19,9 +19,9 @@ data class SearchUiState(
     val showInitialState: Boolean = true
 )
 
-class SearchViewModel : ViewModel() {
+open class SearchViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SearchUiState())
-    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+    open val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private val allLocations = listOf(
         LocationUi("Bogotá", "Colombia"),
@@ -34,7 +34,7 @@ class SearchViewModel : ViewModel() {
         LocationUi("Paris", "France")
     )
 
-    fun onQueryChanged(query: String) {
+    open fun onQueryChanged(query: String) {
         _uiState.update { it.copy(query = query) }
         
         if (query.length < 2) {

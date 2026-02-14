@@ -111,6 +111,7 @@ fun LocationItem(location: LocationUi, onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(vertical = 8.dp)
+            .testTag("location_item_${location.name}")
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

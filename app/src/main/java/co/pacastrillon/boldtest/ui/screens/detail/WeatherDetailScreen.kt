@@ -70,11 +70,12 @@ fun WeatherDetailScreen(
                 .testTag("detail_root")
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("detail_loading"))
             } else if (uiState.errorMessage != null) {
                 ErrorState(
                     message = uiState.errorMessage ?: "Unknown Error",
-                    onRetry = { viewModel.load(locationName) }
+                    onRetry = { viewModel.load(locationName) },
+                    modifier = Modifier.testTag("detail_error")
                 )
             } else if (uiState.data != null) {
                 val data = uiState.data!!
@@ -131,7 +132,9 @@ fun WeatherDetailScreen(
                         WeatherCard(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(16.dp).testTag("detail_days_list")) {
                                 data.days.forEachIndexed { index, day ->
-                                    DayForecastItem(day)
+                                    Box(modifier = Modifier.testTag("day_item_$index")) {
+                                        DayForecastItem(day)
+                                    }
                                     if (index < data.days.size - 1) {
                                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                                     }
