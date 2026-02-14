@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.pacastrillon.boldtest.ui.designsystem.BoldTopBar
 import co.pacastrillon.boldtest.ui.designsystem.EmptyState
@@ -35,7 +36,7 @@ import co.pacastrillon.boldtest.ui.designsystem.ErrorState
 @Composable
 fun SearchScreen(
     onNavigateToDetail: (String) -> Unit,
-    viewModel: SearchViewModel = viewModel()
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -66,7 +67,7 @@ fun SearchScreen(
             } else if (uiState.errorMessage != null) {
                 ErrorState(
                     message = uiState.errorMessage ?: "Unknown error",
-                    onRetry = { viewModel.onQueryChanged(uiState.query) },
+                    onRetry = { viewModel.retry() },
                     modifier = Modifier.testTag("search_error")
                 )
             } else if (uiState.showInitialState) {

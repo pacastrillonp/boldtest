@@ -2,12 +2,28 @@ package co.pacastrillon.boldtest.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import co.pacastrillon.boldtest.domain.model.Location
+import co.pacastrillon.boldtest.domain.usecase.SearchLocationsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import co.pacastrillon.boldtest.domain.result.WeatherError
+import co.pacastrillon.boldtest.domain.result.WeatherResult
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
 
 data class LocationUi(val name: String, val country: String)
 
@@ -19,41 +35,87 @@ data class SearchUiState(
     val showInitialState: Boolean = true
 )
 
-open class SearchViewModel : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val searchLocations: SearchLocationsUseCase
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(SearchUiState())
-    open val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
-    private val allLocations = listOf(
-        LocationUi("Bogotá", "Colombia"),
-        LocationUi("Medellín", "Colombia"),
-        LocationUi("Cali", "Colombia"),
-        LocationUi("New York", "USA"),
-        LocationUi("London", "UK"),
-        LocationUi("Tokyo", "Japan"),
-        LocationUi("Madrid", "Spain"),
-        LocationUi("Paris", "France")
-    )
+    private val queryFlow = MutableStateFlow("")
+    private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
 
-    open fun onQueryChanged(query: String) {
-        _uiState.update { it.copy(query = query) }
-        
-        if (query.length < 2) {
-            _uiState.update { it.copy(showInitialState = true, results = emptyList(), errorMessage = null, isLoading = false) }
-            return
-        }
+    init {
+        observeQuery()
+    }
 
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, showInitialState = false, errorMessage = null) }
-            delay(500) // Simular network delay
-
-            if (query.lowercase() == "error") {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Simulated error occurred") }
-            } else {
-                val filtered = allLocations.filter { 
-                    it.name.contains(query, ignoreCase = true) 
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private fun observeQuery() {
+        combine(queryFlow, retryTrigger) { query, _ -> query }
+            .onEach { query ->
+                _uiState.update { it.copy(query = query) }
+                if (query.trim().length < 2) {
+                    _uiState.update {
+                        it.copy(
+                            showInitialState = true,
+                            results = emptyList(),
+                            errorMessage = null,
+                            isLoading = false
+                        )
+                    }
                 }
-                _uiState.update { it.copy(isLoading = false, results = filtered) }
             }
+            .map { it.trim() }
+            .filter { it.length >= 2 }
+            .debounce(350)
+            .distinctUntilChanged()
+            .onEach {
+                _uiState.update { it.copy(isLoading = true, showInitialState = false, errorMessage = null) }
+            }
+            .flatMapLatest { query ->
+                flow {
+                    emit(searchLocations(query))
+                }
+            }
+            .onEach { result ->
+                when (result) {
+                    is WeatherResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                results = result.data.map { loc -> loc.toUi() },
+                                errorMessage = null
+                            )
+                        }
+                    }
+                    is WeatherResult.Error -> {
+                        val message = when (result.error) {
+                            WeatherError.NETWORK -> "No internet connection. Try again."
+                            WeatherError.UNAUTHORIZED -> "Invalid API key."
+                            WeatherError.SERVER -> "Server error. Please retry."
+                            WeatherError.UNKNOWN -> "Unexpected error. Please retry."
+                        }
+                        _uiState.update {
+                            it.copy(isLoading = false, errorMessage = message)
+                        }
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun onQueryChanged(query: String) {
+        queryFlow.value = query
+    }
+
+    fun retry() {
+        val currentQuery = queryFlow.value
+        if (currentQuery.trim().length >= 2) {
+            retryTrigger.tryEmit(Unit)
         }
     }
 }
+
+private fun Location.toUi(): LocationUi = LocationUi(name, country)
+

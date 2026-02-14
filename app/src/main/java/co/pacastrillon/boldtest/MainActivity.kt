@@ -7,6 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import co.pacastrillon.boldtest.ui.navigation.WeatherNavGraph
 import co.pacastrillon.boldtest.ui.theme.BoldTestTheme
 
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
