@@ -1,5 +1,7 @@
 package co.pacastrillon.boldtest.ui.models
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import co.pacastrillon.boldtest.domain.model.Forecast
 import co.pacastrillon.boldtest.domain.model.ForecastDay
 import java.time.LocalDate
@@ -22,6 +24,7 @@ data class ForecastDayUi(
     val iconUrl: String
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun Forecast.toUi(): ForecastUi {
     // We expect exactly 3 days from the domain layer
     val currentDay = days.firstOrNull()
@@ -39,6 +42,7 @@ fun Forecast.toUi(): ForecastUi {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun ForecastDay.toUi(isToday: Boolean): ForecastDayUi {
     val dateParsed = try {
         // Assuming API returns YYYY-MM-DD

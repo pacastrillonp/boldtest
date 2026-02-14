@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import co.pacastrillon.boldtest.ui.designsystem.BoldTopBar
 import co.pacastrillon.boldtest.ui.designsystem.EmptyState
 import co.pacastrillon.boldtest.ui.designsystem.ErrorState
@@ -78,7 +77,9 @@ fun SearchScreen(
                 } else {
                     LazyColumn(modifier = Modifier.testTag("search_list")) {
                         items(uiState.results) { location ->
-                            LocationItem(location = location, onClick = { onNavigateToDetail(location.name) })
+                            LocationItem(
+                                location = location,
+                                onClick = { onNavigateToDetail(location.name) })
                         }
                     }
                 }
@@ -94,9 +95,9 @@ fun InitialSearchContent(onCityClick: (String) -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
         LocationItem(LocationUi("Bogotá", "Colombia"), onClick = { onCityClick("Bogotá") })
         LocationItem(LocationUi("Medellín", "Colombia"), onClick = { onCityClick("Medellín") })
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text("Popular Cities", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         LocationItem(LocationUi("New York", "USA"), onClick = { onCityClick("New York") })
