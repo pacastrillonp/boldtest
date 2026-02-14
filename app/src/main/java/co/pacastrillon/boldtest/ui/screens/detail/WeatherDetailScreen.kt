@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,11 +33,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import co.pacastrillon.boldtest.ui.designsystem.BoldTopBar
 import co.pacastrillon.boldtest.ui.designsystem.ErrorState
 import co.pacastrillon.boldtest.ui.designsystem.WeatherCard
+import co.pacastrillon.boldtest.ui.models.ForecastDayUi
 import co.pacastrillon.boldtest.ui.theme.BoldGradients
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -47,7 +46,7 @@ import co.pacastrillon.boldtest.ui.theme.BoldGradients
 fun WeatherDetailScreen(
     locationName: String,
     onBack: () -> Unit,
-    viewModel: DetailViewModel = viewModel()
+    viewModel: DetailViewModel = hiltViewModel()
 ) {
     LaunchedEffect(locationName) {
         viewModel.load(locationName)
@@ -74,7 +73,7 @@ fun WeatherDetailScreen(
             } else if (uiState.errorMessage != null) {
                 ErrorState(
                     message = uiState.errorMessage ?: "Unknown Error",
-                    onRetry = { viewModel.load(locationName) },
+                    onRetry = { viewModel.retry() },
                     modifier = Modifier.testTag("detail_error")
                 )
             } else if (uiState.data != null) {
@@ -93,7 +92,7 @@ fun WeatherDetailScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = data.date,
+                                text = data.todayLabel,
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = Color.White
                             )
@@ -149,7 +148,7 @@ fun WeatherDetailScreen(
 }
 
 @Composable
-fun DayForecastItem(day: DayForecast) {
+fun DayForecastItem(day: ForecastDayUi) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
