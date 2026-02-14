@@ -70,7 +70,13 @@ fun SearchScreen(
                     modifier = Modifier.testTag("search_error")
                 )
             } else if (uiState.showInitialState) {
-                InitialSearchContent(onCityClick = onNavigateToDetail)
+                InitialSearchContent(
+                    recentSearches = uiState.recentSearches,
+                    onLocationClick = { location ->
+                        viewModel.onLocationSelected(location)
+                        onNavigateToDetail(location.name)
+                    }
+                )
             } else {
                 if (uiState.results.isEmpty()) {
                     EmptyState(message = "No results found for \"${uiState.query}\"")
@@ -79,7 +85,10 @@ fun SearchScreen(
                         items(uiState.results) { location ->
                             LocationItem(
                                 location = location,
-                                onClick = { onNavigateToDetail(location.name) })
+                                onClick = {
+                                    viewModel.onLocationSelected(location)
+                                    onNavigateToDetail(location.name)
+                                })
                         }
                     }
                 }
@@ -89,20 +98,32 @@ fun SearchScreen(
 }
 
 @Composable
-fun InitialSearchContent(onCityClick: (String) -> Unit) {
+fun InitialSearchContent(
+    recentSearches: List<LocationUi>,
+    onLocationClick: (LocationUi) -> Unit
+) {
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Recent Searches", style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        LocationItem(LocationUi("Bogotá", "Colombia"), onClick = { onCityClick("Bogotá") })
-        LocationItem(LocationUi("Medellín", "Colombia"), onClick = { onCityClick("Medellín") })
-
-        Spacer(modifier = Modifier.height(24.dp))
+        if (recentSearches.isNotEmpty()) {
+            Text("Recent Searches", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            recentSearches.forEach { location ->
+                LocationItem(location = location, onClick = { onLocationClick(location) })
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
         Text("Popular Cities", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
-        LocationItem(LocationUi("New York", "USA"), onClick = { onCityClick("New York") })
-        LocationItem(LocationUi("London", "UK"), onClick = { onCityClick("London") })
-        LocationItem(LocationUi("Tokyo", "Japan"), onClick = { onCityClick("Tokyo") })
+        val popular = listOf(
+            LocationUi("New York", "USA"),
+            LocationUi("London", "UK"),
+            LocationUi("Tokyo", "Japan"),
+            LocationUi("Bogotá", "Colombia"),
+            LocationUi("Medellín", "Colombia")
+        )
+        popular.forEach { location ->
+             LocationItem(location = location, onClick = { onLocationClick(location) })
+        }
     }
 }
 

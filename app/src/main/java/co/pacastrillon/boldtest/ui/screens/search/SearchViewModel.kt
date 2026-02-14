@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.pacastrillon.boldtest.domain.model.Location
 import co.pacastrillon.boldtest.domain.usecase.SearchLocationsUseCase
+import co.pacastrillon.boldtest.domain.usecase.recent.GetRecentSearchesUseCase
+import co.pacastrillon.boldtest.domain.usecase.recent.SaveRecentSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.update
 import co.pacastrillon.boldtest.domain.result.WeatherError
 import co.pacastrillon.boldtest.domain.result.WeatherResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class LocationUi(val name: String, val country: String)
@@ -32,12 +35,15 @@ data class SearchUiState(
     val isLoading: Boolean = false,
     val results: List<LocationUi> = emptyList(),
     val errorMessage: String? = null,
-    val showInitialState: Boolean = true
+    val showInitialState: Boolean = true,
+    val recentSearches: List<LocationUi> = emptyList()
 )
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchLocations: SearchLocationsUseCase
+    private val searchLocations: SearchLocationsUseCase,
+    private val getRecentSearches: GetRecentSearchesUseCase,
+    private val saveRecentSearch: SaveRecentSearchUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -48,6 +54,15 @@ class SearchViewModel @Inject constructor(
 
     init {
         observeQuery()
+        observeRecentSearches()
+    }
+
+    private fun observeRecentSearches() {
+        getRecentSearches()
+            .onEach { recents ->
+                _uiState.update { it.copy(recentSearches = recents.map { loc -> loc.toUi() }) }
+            }
+            .launchIn(viewModelScope)
     }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -115,7 +130,14 @@ class SearchViewModel @Inject constructor(
             retryTrigger.tryEmit(Unit)
         }
     }
+
+    fun onLocationSelected(locationUi: LocationUi) {
+        viewModelScope.launch {
+            saveRecentSearch(locationUi.toDomain())
+        }
+    }
 }
 
 private fun Location.toUi(): LocationUi = LocationUi(name, country)
+private fun LocationUi.toDomain(): Location = Location(name, country, null, 0.0, 0.0)
 

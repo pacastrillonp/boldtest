@@ -8,4 +8,6 @@ import co.pacastrillon.boldtest.domain.result.WeatherResult
 interface WeatherRepository {
     suspend fun searchLocations(query: String): WeatherResult<List<Location>>
     suspend fun getForecast3Days(locationQuery: String): WeatherResult<Forecast>
+    fun getRecentSearches(): kotlinx.coroutines.flow.Flow<List<Location>>
+    suspend fun saveRecentSearch(location: Location)
 }
