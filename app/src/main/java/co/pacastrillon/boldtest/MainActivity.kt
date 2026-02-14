@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import co.pacastrillon.boldtest.ui.navigation.WeatherNavGraph
 import co.pacastrillon.boldtest.ui.theme.BoldTestTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,9 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BoldTestTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) {
-//
-//                }
+                WeatherNavGraph()
             }
         }
     }
