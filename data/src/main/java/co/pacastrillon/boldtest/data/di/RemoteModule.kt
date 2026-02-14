@@ -2,6 +2,8 @@ package co.pacastrillon.boldtest.data.di
 
 import co.pacastrillon.boldtest.data.remote.ApiService
 import co.pacastrillon.boldtest.data.remote.NetworkApiJson
+import co.pacastrillon.boldtest.data.remote.WeatherApiConfig.API_KEY
+import co.pacastrillon.boldtest.data.remote.WeatherApiConfig.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +30,22 @@ object RemoteModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val originalHttpUrl = original.url
+
+                val url = originalHttpUrl.newBuilder()
+                    .addQueryParameter("key", API_KEY)
+                    .build()
+
+                val requestBuilder = original.newBuilder()
+                    .url(url)
+
+                chain.proceed(requestBuilder.build())
+            }
+            .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
             .build()
     }
 
@@ -41,7 +59,7 @@ object RemoteModule {
         val contentType = "application/json".toMediaType()
 
         return Retrofit.Builder()
-//            .baseUrl("https://api.imgflip.com/")
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()

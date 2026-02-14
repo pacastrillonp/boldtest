@@ -1,6 +1,6 @@
 package co.pacastrillon.boldtest.domain.model
 
 data class Forecast(
-    val locationName: String,
+    val location: Location,
     val days: List<ForecastDay>
 )
