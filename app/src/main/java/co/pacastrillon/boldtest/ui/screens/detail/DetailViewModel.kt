@@ -22,16 +22,16 @@ data class DetailUiState(
 )
 
 @HiltViewModel
-class DetailViewModel @Inject constructor(
+open class DetailViewModel @Inject constructor(
     private val getForecast3Days: GetForecast3DaysUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
-    val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
+    open val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
     private var lastQuery: String? = null
 
-    fun load(locationName: String) {
+    open fun load(locationName: String) {
         lastQuery = locationName
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }

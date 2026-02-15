@@ -40,14 +40,14 @@ data class SearchUiState(
 )
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(
+open class SearchViewModel @Inject constructor(
     private val searchLocations: SearchLocationsUseCase,
     private val getRecentSearches: GetRecentSearchesUseCase,
     private val saveRecentSearch: SaveRecentSearchUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
-    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+    open val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private val queryFlow = MutableStateFlow("")
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
@@ -120,7 +120,7 @@ class SearchViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onQueryChanged(query: String) {
+    open fun onQueryChanged(query: String) {
         queryFlow.value = query
     }
 

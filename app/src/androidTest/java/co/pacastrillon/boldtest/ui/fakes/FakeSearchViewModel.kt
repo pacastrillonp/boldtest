@@ -11,7 +11,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class FakeSearchViewModel : SearchViewModel() {
+import co.pacastrillon.boldtest.domain.usecase.SearchLocationsUseCase
+import co.pacastrillon.boldtest.domain.usecase.recent.GetRecentSearchesUseCase
+import co.pacastrillon.boldtest.domain.usecase.recent.SaveRecentSearchUseCase
+
+class FakeSearchViewModel : SearchViewModel(
+    searchLocations = SearchLocationsUseCase(DummyWeatherRepository()),
+    getRecentSearches = GetRecentSearchesUseCase(DummyWeatherRepository()),
+    saveRecentSearch = SaveRecentSearchUseCase(DummyWeatherRepository())
+) {
     private val _fakeUiState = MutableStateFlow(SearchUiState())
     override val uiState: StateFlow<SearchUiState> = _fakeUiState.asStateFlow()
 
@@ -25,7 +33,7 @@ class FakeSearchViewModel : SearchViewModel() {
 
         viewModelScope.launch {
             _fakeUiState.update { it.copy(isLoading = true, showInitialState = false, errorMessage = null) }
-            // Simular delay breve para tests
+
             delay(100) 
 
             if (query.lowercase() == "error") {
