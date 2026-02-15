@@ -2,6 +2,10 @@ package co.pacastrillon.boldtest.ui.screens.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.pacastrillon.boldtest.common.Constants.Network.API_ERROR
+import co.pacastrillon.boldtest.common.Constants.Network.NO_INTERNET
+import co.pacastrillon.boldtest.common.Constants.Network.SERVER_ERROR
+import co.pacastrillon.boldtest.common.Constants.Network.UNKNOWN_ERROR
 import co.pacastrillon.boldtest.domain.result.WeatherError
 import co.pacastrillon.boldtest.domain.result.WeatherResult
 import co.pacastrillon.boldtest.domain.usecase.GetForecast3DaysUseCase
@@ -35,10 +39,10 @@ open class DetailViewModel @Inject constructor(
         lastQuery = locationName
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            
+
             when (val result = getForecast3Days(locationName)) {
                 is WeatherResult.Success -> {
-                    _uiState.update { 
+                    _uiState.update {
                         it.copy(
                             isLoading = false,
                             data = result.data.toUi(),
@@ -46,18 +50,19 @@ open class DetailViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is WeatherResult.Error -> {
                     val message = when (result.error) {
-                        WeatherError.NETWORK -> "No internet connection. Try again."
-                        WeatherError.UNAUTHORIZED -> "Invalid API key."
-                        WeatherError.SERVER -> "Server error. Please retry."
-                        WeatherError.UNKNOWN -> "Unexpected error. Please retry."
+                        WeatherError.NETWORK -> NO_INTERNET
+                        WeatherError.UNAUTHORIZED -> API_ERROR
+                        WeatherError.SERVER -> SERVER_ERROR
+                        WeatherError.UNKNOWN -> UNKNOWN_ERROR
                     }
-                    _uiState.update { 
+                    _uiState.update {
                         it.copy(
                             isLoading = false,
                             errorMessage = message
-                        ) 
+                        )
                     }
                 }
             }

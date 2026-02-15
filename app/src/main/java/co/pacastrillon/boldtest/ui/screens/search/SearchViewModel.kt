@@ -2,6 +2,10 @@ package co.pacastrillon.boldtest.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.pacastrillon.boldtest.common.Constants.Network.API_ERROR
+import co.pacastrillon.boldtest.common.Constants.Network.NO_INTERNET
+import co.pacastrillon.boldtest.common.Constants.Network.SERVER_ERROR
+import co.pacastrillon.boldtest.common.Constants.Network.UNKNOWN_ERROR
 import co.pacastrillon.boldtest.domain.model.Location
 import co.pacastrillon.boldtest.domain.usecase.SearchLocationsUseCase
 import co.pacastrillon.boldtest.domain.usecase.recent.GetRecentSearchesUseCase
@@ -86,7 +90,13 @@ open class SearchViewModel @Inject constructor(
             .debounce(350)
             .distinctUntilChanged()
             .onEach {
-                _uiState.update { it.copy(isLoading = true, showInitialState = false, errorMessage = null) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = true,
+                        showInitialState = false,
+                        errorMessage = null
+                    )
+                }
             }
             .flatMapLatest { query ->
                 flow {
@@ -104,12 +114,13 @@ open class SearchViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is WeatherResult.Error -> {
                         val message = when (result.error) {
-                            WeatherError.NETWORK -> "No internet connection. Try again."
-                            WeatherError.UNAUTHORIZED -> "Invalid API key."
-                            WeatherError.SERVER -> "Server error. Please retry."
-                            WeatherError.UNKNOWN -> "Unexpected error. Please retry."
+                            WeatherError.NETWORK -> NO_INTERNET
+                            WeatherError.UNAUTHORIZED -> API_ERROR
+                            WeatherError.SERVER -> SERVER_ERROR
+                            WeatherError.UNKNOWN -> UNKNOWN_ERROR
                         }
                         _uiState.update {
                             it.copy(isLoading = false, errorMessage = message)

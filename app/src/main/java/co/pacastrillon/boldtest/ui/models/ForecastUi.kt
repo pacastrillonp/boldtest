@@ -26,10 +26,9 @@ data class ForecastDayUi(
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun Forecast.toUi(): ForecastUi {
-    // We expect exactly 3 days from the domain layer
+
     val currentDay = days.firstOrNull()
-    
-    // Safety check, though domain should guarantee 3 days
+
     val uiDays = days.take(3).map { it.toUi(isToday = it == currentDay) }
 
     return ForecastUi(
@@ -45,9 +44,8 @@ fun Forecast.toUi(): ForecastUi {
 @RequiresApi(Build.VERSION_CODES.O)
 fun ForecastDay.toUi(isToday: Boolean): ForecastDayUi {
     val dateParsed = try {
-        // Assuming API returns YYYY-MM-DD
         LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 

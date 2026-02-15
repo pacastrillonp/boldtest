@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import co.pacastrillon.boldtest.common.Constants.SplashScreenTags.BOLD_WEATHER
+import co.pacastrillon.boldtest.common.Constants.SplashScreenTags.SPLASH_ROOT
 import co.pacastrillon.boldtest.ui.theme.BoldGradients
 import kotlinx.coroutines.delay
 
@@ -29,15 +31,14 @@ fun SplashScreen(
     onNavigateToSearch: () -> Unit
 ) {
     LaunchedEffect(Unit) {
-        delay(800) // Simular carga inicial
+        delay(800)
         onNavigateToSearch()
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BoldGradients.Hero)
-            .testTag("splash_root"),
+            .background(BoldGradients.gradient)
+            .testTag(SPLASH_ROOT),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -49,7 +50,7 @@ fun SplashScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Weather App",
+                text = BOLD_WEATHER,
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White,
                 fontWeight = FontWeight.Bold

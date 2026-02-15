@@ -1,22 +1,16 @@
 package co.pacastrillon.boldtest.ui.screens.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,7 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import co.pacastrillon.boldtest.common.Constants.Messages.UNKNOWN_ERROR_MESSAGE
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.ENTER_CITY
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.NO_RESULTS
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.SEARCH_ERROR
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.SEARCH_INPUT
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.SEARCH_LIST
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.SEARCH_LOADING
+import co.pacastrillon.boldtest.common.Constants.SearchScreenTags.SEARCH_TITTLE
 import co.pacastrillon.boldtest.ui.designsystem.BoldTopBar
 import co.pacastrillon.boldtest.ui.designsystem.EmptyState
 import co.pacastrillon.boldtest.ui.designsystem.ErrorState
@@ -40,7 +42,7 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-        topBar = { BoldTopBar(title = "Search Screen") }
+        topBar = { BoldTopBar(title = SEARCH_TITTLE) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -50,24 +52,24 @@ fun SearchScreen(
             OutlinedTextField(
                 value = uiState.query,
                 onValueChange = viewModel::onQueryChanged,
-                placeholder = { Text("Enter city name") },
+                placeholder = { Text(ENTER_CITY) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .testTag("search_input"),
+                    .testTag(SEARCH_INPUT),
                 trailingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true
             )
 
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(modifier = Modifier.testTag("search_loading"))
+                    CircularProgressIndicator(modifier = Modifier.testTag(SEARCH_LOADING))
                 }
             } else if (uiState.errorMessage != null) {
                 ErrorState(
-                    message = uiState.errorMessage ?: "Unknown error",
+                    message = uiState.errorMessage ?: UNKNOWN_ERROR_MESSAGE,
                     onRetry = { viewModel.retry() },
-                    modifier = Modifier.testTag("search_error")
+                    modifier = Modifier.testTag(SEARCH_ERROR)
                 )
             } else if (uiState.showInitialState) {
                 InitialSearchContent(
@@ -79,9 +81,9 @@ fun SearchScreen(
                 )
             } else {
                 if (uiState.results.isEmpty()) {
-                    EmptyState(message = "No results found for \"${uiState.query}\"")
+                    EmptyState(message = "$NO_RESULTS \"${uiState.query}\"")
                 } else {
-                    LazyColumn(modifier = Modifier.testTag("search_list")) {
+                    LazyColumn(modifier = Modifier.testTag(SEARCH_LIST)) {
                         items(uiState.results) { location ->
                             LocationItem(
                                 location = location,
@@ -94,60 +96,5 @@ fun SearchScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun InitialSearchContent(
-    recentSearches: List<LocationUi>,
-    onLocationClick: (LocationUi) -> Unit
-) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        if (recentSearches.isNotEmpty()) {
-            Text("Recent Searches", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            recentSearches.forEach { location ->
-                LocationItem(location = location, onClick = { onLocationClick(location) })
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        Text("Popular Cities", style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        val popular = listOf(
-            LocationUi("New York", "USA"),
-            LocationUi("London", "UK"),
-            LocationUi("Tokyo", "Japan"),
-            LocationUi("Bogotá", "Colombia"),
-            LocationUi("Medellín", "Colombia")
-        )
-        popular.forEach { location ->
-             LocationItem(location = location, onClick = { onLocationClick(location) })
-        }
-    }
-}
-
-@Composable
-fun LocationItem(location: LocationUi, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
-            .testTag("location_item_${location.name}")
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = location.name,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = location.country,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
     }
 }

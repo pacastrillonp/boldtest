@@ -6,10 +6,14 @@ composeBom = "2026.02.00"
 
 # --- AndroidX Core / Lifecycle / Activity ---
 coreKtx = "1.17.0"
+kotlinxCoroutinesTest = "1.10.2"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 
 # --- Navigation ---
+mockitoCore = "5.21.0"
+mockitoKotlin = "6.2.3"
+mockwebserver = "5.3.2"
 navigationCompose = "2.9.7"
 
 # --- UI / Images ---
@@ -26,7 +30,6 @@ loggingInterceptor = "5.3.2"
 retrofit = "3.0.0"
 converterKotlinxSerialization = "3.0.0"
 kotlinxSerializationJson = "1.10.0"
-retrofitSerialization = "1.0.0"
 
 # --- Persistence ---
 roomRuntime = "2.8.4"
@@ -83,12 +86,15 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 # =======================
 # Networking / Serialization
 # =======================
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "converterKotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-retrofitKotlinxSerializationConverter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofitSerialization" }
 
 # =======================
 # Persistence (Room)

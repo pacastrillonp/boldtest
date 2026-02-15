@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,14 +36,14 @@ import co.pacastrillon.boldtest.ui.theme.BoldGradients
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BoldTopBar(
+    modifier: Modifier = Modifier,
     title: String,
     onBack: (() -> Unit)? = null,
-    actions: @Composable (RowScope.() -> Unit) = {},
-    modifier: Modifier = Modifier
+    actions: @Composable (RowScope.() -> Unit) = {}
 ) {
     Box(
         modifier = modifier
-            .background(BoldGradients.Hero)
+            .background(BoldGradients.gradient)
     ) {
         CenterAlignedTopAppBar(
             title = { Text(text = title, color = White) },
@@ -60,11 +59,12 @@ fun BoldTopBar(
                 }
             },
             actions = actions,
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent,
+                scrolledContainerColor = Color.Unspecified,
+                navigationIconContentColor = White,
                 titleContentColor = White,
-                actionIconContentColor = White,
-                navigationIconContentColor = White
+                actionIconContentColor = White
             )
         )
     }
@@ -103,13 +103,15 @@ fun WeatherCard(
 
 @Composable
 fun EmptyState(
+    modifier: Modifier = Modifier,
     message: String,
     actionText: String? = null,
-    onAction: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    onAction: (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -133,7 +135,9 @@ fun ErrorState(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
