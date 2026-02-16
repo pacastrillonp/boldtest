@@ -68,5 +68,6 @@ object Constants {
         const val EMPTY_DASH = "--"
         const val AGE_FORMAT = "EEEE"
         const val DATE_FORMAT = "yyyy-MM-dd"
+        const val EXPECTED_FORECAST = "Expected 3 days of forecast, but got"
     }
 }

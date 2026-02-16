@@ -11,7 +11,7 @@ data class ForecastDto(
 
 @Serializable
 data class ForecastDaysDto(
-    @SerialName("forecastday") val forecastday: List<ForecastDayDto>
+    @SerialName("forecastday") val forecastDay: List<ForecastDayDto>
 )
 
 @Serializable

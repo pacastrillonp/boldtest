@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "recent_search")
 data class RecentSearchEntity(
     @PrimaryKey
-    val locationKey: String, // e.g. "Medellín, Colombia"
+    val locationKey: String,
     val name: String,
     val country: String,
-    val lastUsed: Long // epoch millis
+    val lastUsed: Long
 )

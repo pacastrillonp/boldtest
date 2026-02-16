@@ -4,6 +4,7 @@ import co.pacastrillon.boldtest.data.remote.ApiService
 import co.pacastrillon.boldtest.data.remote.NetworkApiJson
 import co.pacastrillon.boldtest.data.remote.WeatherApiConfig.API_KEY
 import co.pacastrillon.boldtest.data.remote.WeatherApiConfig.BASE_URL
+import co.pacastrillon.boldtest.data.remote.WeatherApiConfig.KEY_TAG
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +36,7 @@ object RemoteModule {
                 val originalHttpUrl = original.url
 
                 val url = originalHttpUrl.newBuilder()
-                    .addQueryParameter("key", API_KEY)
+                    .addQueryParameter(KEY_TAG, API_KEY)
                     .build()
 
                 val requestBuilder = original.newBuilder()

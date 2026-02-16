@@ -13,7 +13,4 @@ interface ForecastCacheDao {
 
     @Query("SELECT * FROM forecast_cache WHERE locationKey = :locationKey LIMIT 1")
     suspend fun getByKey(locationKey: String): ForecastCacheEntity?
-
-    @Query("DELETE FROM forecast_cache")
-    suspend fun deleteAll()
 }

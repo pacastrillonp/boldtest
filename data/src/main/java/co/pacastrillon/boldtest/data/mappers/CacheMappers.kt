@@ -30,7 +30,7 @@ fun ForecastCacheModel.toDomain(): Forecast {
         location = Location(
             name = locationName,
             country = locationCountry,
-            region = null, // Cache logic simplification
+            region = null,
             lat = locationLat,
             lon = locationLon
         ),

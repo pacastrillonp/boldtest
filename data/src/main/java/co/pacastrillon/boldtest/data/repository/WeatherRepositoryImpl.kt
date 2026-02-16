@@ -27,7 +27,7 @@ class WeatherRepositoryImpl @Inject constructor(
     private val api: ApiService,
     private val recentSearchDao: RecentSearchDao,
     private val forecastCacheDao: ForecastCacheDao,
-    @NetworkApiJson private val jsonSerializer: Json
+    @param:NetworkApiJson private val jsonSerializer: Json
 ) : WeatherRepository {
 
     override suspend fun searchLocations(query: String): WeatherResult<List<Location>> {
@@ -44,7 +44,6 @@ class WeatherRepositoryImpl @Inject constructor(
         return try {
             val result = api.getForecast(locationQuery, days = 3).toDomain3Days()
 
-            // Save to cache
             try {
                 val cacheModel = result.toCacheModel()
                 val jsonString = jsonSerializer.encodeToString(cacheModel)
@@ -56,7 +55,6 @@ class WeatherRepositoryImpl @Inject constructor(
                     )
                 )
             } catch (e: Exception) {
-                // Ignore cache save errors, don't block the UI
                 e.printStackTrace()
             }
 
@@ -64,7 +62,6 @@ class WeatherRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             val weatherError = mapExceptionToWeatherError(e)
 
-            // If network error, try fallback to cache
             if (weatherError == WeatherError.NETWORK) {
                 try {
                     val cached = forecastCacheDao.getByKey(locationKey)
@@ -90,8 +87,8 @@ class WeatherRepositoryImpl @Inject constructor(
                 Location(
                     name = entity.name,
                     country = entity.country,
-                    region = null, // Not stored in recents
-                    lat = 0.0, // Not stored
+                    region = null,
+                    lat = 0.0, 
                     lon = 0.0
                 )
             }

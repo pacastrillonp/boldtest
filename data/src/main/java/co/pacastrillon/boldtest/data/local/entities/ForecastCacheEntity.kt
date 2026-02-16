@@ -8,5 +8,5 @@ data class ForecastCacheEntity(
     @PrimaryKey
     val locationKey: String,
     val json: String,
-    val updatedAt: Long // epoch millis
+    val updatedAt: Long
 )

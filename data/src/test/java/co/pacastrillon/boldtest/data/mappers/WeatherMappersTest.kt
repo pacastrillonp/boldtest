@@ -7,7 +7,6 @@ import co.pacastrillon.boldtest.data.dto.ForecastDto
 import co.pacastrillon.boldtest.data.dto.ForecastDayDto
 import co.pacastrillon.boldtest.data.dto.LocationDto
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WeatherMappersTest {
@@ -45,7 +44,7 @@ class WeatherMappersTest {
         )
         val dto = ForecastDto(
             location = locationDto,
-            forecast = ForecastDaysDto(forecastday = days)
+            forecast = ForecastDaysDto(forecastDay = days)
         )
 
         // When
@@ -67,7 +66,7 @@ class WeatherMappersTest {
         )
         val dto = ForecastDto(
             location = locationDto,
-            forecast = ForecastDaysDto(forecastday = days)
+            forecast = ForecastDaysDto(forecastDay = days)
         )
 
         // When
