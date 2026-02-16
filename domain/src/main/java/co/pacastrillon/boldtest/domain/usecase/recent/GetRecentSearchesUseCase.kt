@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetRecentSearchesUseCase @Inject constructor(
-    private val repository: WeatherRepository
+    private val weatherRepository: WeatherRepository
 ) {
     operator fun invoke(): Flow<List<Location>> {
-        return repository.getRecentSearches()
+        return weatherRepository.getRecentSearches()
     }
 }

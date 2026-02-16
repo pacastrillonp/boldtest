@@ -5,9 +5,9 @@ import co.pacastrillon.boldtest.domain.repository.WeatherRepository
 import javax.inject.Inject
 
 class SaveRecentSearchUseCase @Inject constructor(
-    private val repository: WeatherRepository
+    private val weatherRepository: WeatherRepository
 ) {
     suspend operator fun invoke(location: Location) {
-        repository.saveRecentSearch(location)
+        weatherRepository.saveRecentSearch(location)
     }
 }

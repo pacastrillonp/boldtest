@@ -59,5 +59,14 @@ object Constants {
 
     object Messages {
         const val UNKNOWN_ERROR_MESSAGE = "Unknown Error"
+        const val LOCATION_QUERY_EMPTY = "locationQuery is blank"
+    }
+
+    object Defaults {
+        const val TODAY = "Today"
+        const val EMPTY_STRING = ""
+        const val EMPTY_DASH = "--"
+        const val AGE_FORMAT = "EEEE"
+        const val DATE_FORMAT = "yyyy-MM-dd"
     }
 }
