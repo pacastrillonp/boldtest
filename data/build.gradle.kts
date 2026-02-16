@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     // Android / Kotlin
     alias(libs.plugins.android.library)
@@ -18,8 +21,23 @@ android {
         version = release(36)
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 26
+
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(FileInputStream(localPropertiesFile))
+        }
+
+        val apiKey: String = localProperties.getProperty("WEATHER_API_KEY")
+            ?: project.findProperty("WEATHER_API_KEY") as String?
+            ?: ""
+        buildConfigField("String", "WEATHER_API_KEY", "\"$apiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")

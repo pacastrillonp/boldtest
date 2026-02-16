@@ -29,7 +29,7 @@ fun InitialSearchContent(
     Column(modifier = Modifier.padding(16.dp)) {
         if (recentSearches.isNotEmpty()) {
             Text(RECENT_SEARCHES, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             recentSearches.forEach { location ->
                 LocationItem(location = location, onClick = { onLocationClick(location) })
             }
